@@ -27,8 +27,8 @@ export default function RootLayout({
       <head />
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased ",
-          fontSans.variable
+          "container min-h-screen bg-background font-sans antialiased",
+          fontSans.variable,
         )}
       >
         <ThemeProvider
@@ -38,7 +38,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Navbar />
-          <main className="p-4">{children}</main>
+          <main className="py-4">{children}</main>
         </ThemeProvider>
       </body>
     </html>
