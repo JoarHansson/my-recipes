@@ -6,9 +6,9 @@ export default async function Recipes() {
 
   return (
     <>
-      {recipes.map((recipe) => {
+      {recipes.map((recipe, index) => {
         return (
-          <div>
+          <div key={index}>
             <Link className="underline" href={`/recipes/${recipe.id}`}>
               {recipe.title}
             </Link>
