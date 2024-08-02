@@ -1,17 +1,32 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+import { Ingredient, Instruction } from "@/lib/types";
 
 const prisma = new PrismaClient();
 
 let fakeRecipes: Prisma.RecipeCreateInput[] = [];
 
-for (let index = 0; index < 10; index++) {
-  const ingredients = faker.word
-    .words({ count: { min: 5, max: 10 } })
-    .split(" ");
-  const instructions = faker.word
-    .words({ count: { min: 5, max: 10 } })
-    .split(" ");
+for (let i = 0; i < 10; i++) {
+  let ingredients: Ingredient[] = [];
+  let instructions: Instruction[] = [];
+
+  for (let j = 0; j < 10; j++) {
+    ingredients.push({ name: faker.word.words({ count: { min: 2, max: 5 } }) });
+
+    // run the loop between 1 and 10 times
+    // -> 20% chance to break the loop each iteration
+    const random = Math.random();
+    if (random < 0.2) break;
+  }
+
+  for (let k = 0; k < 10; k++) {
+    instructions.push({
+      name: faker.word.words({ count: { min: 5, max: 20 } }),
+    });
+
+    const random = Math.random();
+    if (random < 0.2) break;
+  }
 
   fakeRecipes.push({
     title: faker.word.words(),
