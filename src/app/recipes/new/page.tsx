@@ -3,25 +3,11 @@
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
-import { z } from "zod";
 import { createRecipe } from "@/actions/actions";
-
-const ingredientSchema = z.object({
-  name: z.string().min(1, "Ingredient must be at least 1 character."),
-});
-
-const instructionSchema = z.object({
-  name: z.string().min(1, "Instruction must be at least 1 character."),
-});
-
-const recipeSchema = z.object({
-  title: z.string().min(1, "Recipe title must be at least 1 character."),
-  description: z.string(), // optional
-  ingredients: z.array(ingredientSchema),
-  instructions: z.array(instructionSchema),
-});
-
-type TRecipeSchema = z.infer<typeof recipeSchema>;
+import { recipeSchema, TRecipeSchema } from "@/lib/types";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function NewRecipe() {
   const {
@@ -88,43 +74,55 @@ export default function NewRecipe() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-2">
-      <input
-        {...register("title")}
-        type="text"
-        placeholder="Recipe title"
-        className="rounded px-4 py-2"
-      />
-      {errors.title && (
-        <p className="text-red-500">{`${errors.title.message}`}</p>
-      )}
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-8">
+      <div className="flex flex-col space-y-2">
+        <Label htmlFor="title">Title</Label>
+        <Input
+          {...register("title")}
+          type="text"
+          placeholder="Recipe title"
+          className="rounded px-4 py-2"
+        />
+        {errors.title && (
+          <p className="text-red-500">{`${errors.title.message}`}</p>
+        )}
+      </div>
 
-      <input
-        {...register("description")}
-        type="text"
-        placeholder="A short description (optional)"
-        className="rounded px-4 py-2"
-      />
-      {errors.description && (
-        <p className="text-red-500">{`${errors.description.message}`}</p>
-      )}
+      <div className="flex flex-col space-y-2">
+        <Label htmlFor="description">Description</Label>
+        <Input
+          {...register("description")}
+          type="text"
+          placeholder="A short description (optional)"
+          className="rounded px-4 py-2"
+        />
+        {errors.description && (
+          <p className="text-red-500">{`${errors.description.message}`}</p>
+        )}
+      </div>
 
-      <div>
-        <label>ingredients:</label>
+      <div className="flex flex-col space-y-2">
+        <Label>Ingredients</Label>
         {ingredientFields.map((field, index) => {
           return (
-            <div key={field.id}>
-              <input
-                {...register(`ingredients.${index}.name` as const)}
-                type="text"
-                placeholder={`Ingredient ${index + 1}`}
-                className="rounded px-4 py-2"
-              />
-              {index > 0 && (
-                <button type="button" onClick={() => removeIngredient(index)}>
-                  Remove
-                </button>
-              )}
+            <div key={field.id} className="mb-4">
+              <div className="flex space-x-4">
+                <Input
+                  {...register(`ingredients.${index}.name` as const)}
+                  type="textarea"
+                  placeholder={`Ingredient ${index + 1}`}
+                  className="rounded px-4 py-2"
+                />
+                {index > 0 && (
+                  <Button
+                    type="button"
+                    variant={"destructive"}
+                    onClick={() => removeIngredient(index)}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
               {errors.ingredients && errors.ingredients[index] && (
                 <p className="text-red-500">
                   {errors.ingredients[index]?.name?.message}
@@ -133,27 +131,37 @@ export default function NewRecipe() {
             </div>
           );
         })}
-        <button type="button" onClick={() => appendIngredient({ name: "" })}>
-          Add another ingredient
-        </button>
+        <Button
+          type="button"
+          variant={"secondary"}
+          onClick={() => appendIngredient({ name: "" })}
+        >
+          Another ingredient
+        </Button>
       </div>
 
-      <div>
-        <label>instructions:</label>
+      <div className="flex flex-col space-y-2">
+        <Label>Instructions</Label>
         {instructionFields.map((field, index) => {
           return (
-            <div key={field.id}>
-              <input
-                {...register(`instructions.${index}.name` as const)}
-                type="text"
-                placeholder={`instruction ${index + 1}`}
-                className="rounded px-4 py-2"
-              />
-              {index > 0 && (
-                <button type="button" onClick={() => removeInstruction(index)}>
-                  Remove
-                </button>
-              )}
+            <div key={field.id} className="mb-4">
+              <div className="flex space-x-4">
+                <Input
+                  {...register(`instructions.${index}.name` as const)}
+                  type="text"
+                  placeholder={`Instruction ${index + 1}`}
+                  className="rounded px-4 py-2"
+                />
+                {index > 0 && (
+                  <Button
+                    type="button"
+                    variant={"destructive"}
+                    onClick={() => removeInstruction(index)}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
               {errors.instructions && errors.instructions[index] && (
                 <p className="text-red-500">
                   {errors.instructions[index]?.name?.message}
@@ -162,18 +170,18 @@ export default function NewRecipe() {
             </div>
           );
         })}
-        <button type="button" onClick={() => appendInstruction({ name: "" })}>
-          Add another instruction
-        </button>
+        <Button
+          type="button"
+          variant={"secondary"}
+          onClick={() => appendInstruction({ name: "" })}
+        >
+          Another instruction
+        </Button>
       </div>
 
-      <button
-        disabled={isSubmitting}
-        type="submit"
-        className="rounded bg-blue-500 py-2 disabled:bg-gray-500"
-      >
-        Submit
-      </button>
+      <Button disabled={isSubmitting} type="submit">
+        Add recipe
+      </Button>
     </form>
   );
 }
