@@ -1,3 +1,4 @@
+import { Typography } from "@/components/ui/typography";
 import prisma from "@/lib/db";
 import { Ingredient, Instruction } from "@/lib/types";
 
@@ -12,18 +13,20 @@ export default async function Recipe({ params }: { params: { id: string } }) {
   const instructions: Instruction[] = JSON.parse(recipe?.instructions || "[]");
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="underline">{recipe?.title}</h1>
-      <ul className="list-disc">
+    <>
+      <Typography variant={"h2"}>{recipe?.title}</Typography>
+
+      <Typography variant={"ul"}>
         {ingredients.map((ingredient, index) => {
           return <li key={index}>{ingredient.name}</li>;
         })}
-      </ul>
-      <ol className="list-decimal">
+      </Typography>
+
+      <Typography variant={"ol"}>
         {instructions.map((instruction, index) => {
           return <li key={index}>{instruction.name}</li>;
         })}
-      </ol>
-    </div>
+      </Typography>
+    </>
   );
 }
