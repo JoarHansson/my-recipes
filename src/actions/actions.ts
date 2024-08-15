@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/db";
+import { redirect } from "next/navigation";
 
 export async function createRecipe(formData: FormData) {
   console.log(formData);
@@ -13,4 +14,8 @@ export async function createRecipe(formData: FormData) {
       instructions: formData.get("instructions") as string,
     },
   });
+}
+
+export async function redirectToRecipesPage() {
+  await redirect("/recipes");
 }

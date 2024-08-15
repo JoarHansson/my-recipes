@@ -1,32 +1,54 @@
+"use client";
+
+import { useState } from "react";
 import { Typography } from "@/components/ui/typography";
-import prisma from "@/lib/db";
+import { ViewToggle } from "@/components/view-toggle";
+import { Recipe } from "@prisma/client";
 import { Ingredient, Instruction } from "@/lib/types";
 
-export default async function Recipe({ params }: { params: { id: string } }) {
-  const recipe = await prisma.recipe.findUnique({
-    where: {
-      id: params.id,
-    },
-  });
-
+export default function RecipePage({ recipe }: { recipe: Recipe }) {
   const ingredients: Ingredient[] = JSON.parse(recipe?.ingredients || "[]");
   const instructions: Instruction[] = JSON.parse(recipe?.instructions || "[]");
 
+  const [currentView, setCurrentView] = useState("ingredients"); // ingredients as initial state seems intuitive
+
+  const getCurrentView = () => {
+    if (currentView === "ingredients") {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <>
-      <Typography variant={"h2"}>{recipe?.title}</Typography>
+      <ViewToggle
+        className={"rounded-full"}
+        logoIsBanana={getCurrentView()}
+        onClickIngredientsLogo={() => setCurrentView("instructions")}
+        onClickInstructionsLogo={() => setCurrentView("ingredients")}
+      />
 
-      <Typography variant={"ul"}>
-        {ingredients.map((ingredient, index) => {
-          return <li key={index}>{ingredient.name}</li>;
-        })}
-      </Typography>
+      {currentView === "ingredients" && (
+        <>
+          <Typography variant={"h2"}>Ingredients</Typography>
+          <Typography variant={"ul"}>
+            {ingredients.map((ingredient, index) => {
+              return <li key={index}>{ingredient.name}</li>;
+            })}
+          </Typography>
+        </>
+      )}
 
-      <Typography variant={"ol"}>
-        {instructions.map((instruction, index) => {
-          return <li key={index}>{instruction.name}</li>;
-        })}
-      </Typography>
+      {currentView === "instructions" && (
+        <>
+          <Typography variant={"h2"}>Instructions</Typography>
+          <Typography variant={"ol"}>
+            {instructions.map((instruction, index) => {
+              return <li key={index}>{instruction.name}</li>;
+            })}
+          </Typography>
+        </>
+      )}
     </>
   );
 }

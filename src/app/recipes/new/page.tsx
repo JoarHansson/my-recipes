@@ -3,7 +3,7 @@
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
-import { createRecipe } from "@/actions/actions";
+import { createRecipe, redirectToRecipesPage } from "@/actions/actions";
 import { recipeSchema, TRecipeSchema } from "@/lib/types";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -62,6 +62,7 @@ export default function NewRecipe() {
     try {
       await createRecipe(formData);
       console.log("Recipe created successfully");
+      await redirectToRecipesPage();
     } catch (error) {
       console.error("Failed to create recipe", error);
     }
